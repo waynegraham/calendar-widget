@@ -50,13 +50,14 @@ class Community_Calendar_Widget extends WP_Widget
     {
         if (array_key_exists('before_widget', $args)) echo $args['before_widget'];
 
-        echo '<h2>The Calendar</h2>';
+        echo '<h2 class="widget-title">Upcoming Events</h2>';
         echo '<div id="community_calendar"><ul class="list-unstyled" id="upcoming-events"></ul></div>';
-        wp_register_script('format-google-calendar', plugins_url('/js/format-google-calendar.js', __FILE__), array('jquery'));
-        wp_enqueue_script('momentjs', 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js');
-        wp_register_script('community_calendar', plugins_url('/js/community_calendar.js', __FILE__), array('jquery', 'momentjs', 'format-google-calendar'));
-        wp_enqueue_script('community_calendar');
+        wp_enqueue_script('moment', 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js');
 
+        wp_enqueue_script('format-google-calendar', plugins_url('/js/format-google-calendar.js', __FILE__), array('jquery', 'moment'));
+        wp_register_script('community_calendar', plugins_url('/js/community_calendar.js', __FILE__), array('format-google-calendar'));
+        // wp_register_script('community_calendar', plugins_url('/js/community_calendar.js', __FILE__), array('jquery', 'momentjs', 'format-google-calendar'));
+        wp_enqueue_script('community_calendar');
         wp_localize_script('community_calendar', 'php_vars', array('count' => $instance['count']));
 
 
@@ -107,4 +108,3 @@ class Community_Calendar_Widget extends WP_Widget
         return $instance;
     }
 } // class Community_Calendar_Widget
-

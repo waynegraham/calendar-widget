@@ -9,19 +9,21 @@
     var extra_params = {
       timeMin: moment().format(),
       key: API_KEY,
-      maxResults: php_vars.count
+      // maxResults: 2
     };
 
     var cal_url = 'https://www.googleapis.com/calendar/v3/calendars/';
     cal_url += CALENDAR_ID + '/events?';
     cal_url += $.param(extra_params);
 
+    console.log(cal_url);
+
     formatGoogleCalendar.init({
       calendarUrl: cal_url,
       past: false,
       upcoming: true,
       sameDayTimes: true,
-      upcomingTopN: php_vars.count,
+      upcomingTopN: 2,
       itemsTagName: 'li',
       upcomingSelector: '#upcoming-events',
       upcomingHeading: '',

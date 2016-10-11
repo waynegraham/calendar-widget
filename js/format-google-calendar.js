@@ -55,13 +55,18 @@ var formatGoogleCalendar = (function() {
             }
 
             for (i in result) {
-                if (isPast(result[i].end.dateTime || result[i].end.date)) {
-                    if (pastCounter < settings.pastTopN) {
-                       pastResult.push(result[i]);
-                       pastCounter++;
-                    }
+                // console.table(result[i]);
+                if (typeof result[i].end == 'undefined') {
+                    console.log('hit it');
                 } else {
-                    upcomingResultTemp.push(result[i]);
+                    if (isPast(result[i].end.date || result[i].end.dateTime)) {
+                        if (pastCounter < settings.pastTopN) {
+                            pastResult.push(result[i]);
+                            pastCounter++;
+                        }
+                    } else {
+                        upcomingResultTemp.push(result[i]);
+                    }
                 }
             }
 
@@ -99,7 +104,7 @@ var formatGoogleCalendar = (function() {
     };
 
     //Overwrites defaultSettings values with overrideSettings and adds overrideSettings if non existent in defaultSettings
-    var mergeOptions = function(defaultSettings, overrideSettings){
+    var mergeOptions = function(defaultSettings, overrideSettings) {
         var newObject = {},
             i;
         for (i in defaultSettings) {
@@ -113,10 +118,19 @@ var formatGoogleCalendar = (function() {
 
     //Get all necessary data (dates, location, summary, description) and creates a list item
     var transformationList = function(result, tagName, format) {
-        var dateStart = getDateInfo(result.start.dateTime || result.start.date),
-            dateEnd = getDateInfo(result.end.dateTime || result.end.date),
-            dateFormatted = getFormattedDate(dateStart, dateEnd),
-            output = '<' + tagName + '>',
+        var dateStart = '',
+            dateEnd = '',
+            dateFormatted = '';
+
+        if (typeof result.end == 'undefined') {
+            console.log('eat it');
+        } else {
+            dateStart = getDateInfo(result.start.date || result.start.dateTime);
+            dateEnd = getDateInfo(result.end.date || result.end.dateTime);
+            dateFormatted = getFormattedDate(dateStart, dateEnd);
+        }
+
+        var output = '<' + tagName + '>',
             summary = result.summary || '',
             description = result.description || '',
             location = result.location || '',
@@ -128,7 +142,7 @@ var formatGoogleCalendar = (function() {
             format[i] = format[i].toString();
 
             if (format[i] === '*summary*') {
-                output = output.concat('<span class="summary"><a href="' + htmlLink +'">' + summary + '</a></span>');
+                output = output.concat('<span class="summary"><a href="' + htmlLink + '">' + summary + '</a></span>');
             } else if (format[i] === '*date*') {
                 output = output.concat('<span class="date">' + dateFormatted + '</span>');
             } else if (format[i] === '*description*') {
@@ -248,7 +262,7 @@ var formatGoogleCalendar = (function() {
         return formattedDate;
     };
 
-    var getFormattedTime = function (date) {
+    var getFormattedTime = function(date) {
         var formattedTime = '',
             period = 'AM',
             hour = date[3],
@@ -277,7 +291,7 @@ var formatGoogleCalendar = (function() {
     };
 
     return {
-        init: function (settingsOverride) {
+        init: function(settingsOverride) {
             var settings = {
                 calendarUrl: 'https://www.googleapis.com/calendar/v3/calendars/milan.kacurak@gmail.com/events?key=AIzaSyCR3-ptjHE-_douJsn8o20oRwkxt-zHStY',
                 past: true,
@@ -300,5 +314,3 @@ var formatGoogleCalendar = (function() {
     };
 
 })();
-
-
